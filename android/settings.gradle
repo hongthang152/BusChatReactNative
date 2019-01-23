@@ -1,0 +1,3 @@
+rootProject.name = 'BusChat'
+
+include ':app'
