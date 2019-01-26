@@ -122,7 +122,7 @@ export default class MyChat extends Component {
      * If backend server responses that no routes have been found, this method displays the error message to user.
      */
     handleNoRoutesFound() {
-        this.appendMessages(Constants.NO_ROUTES_FOUND);
+        this.appendMessages(Constants.NO_ROUTES_FOUND_MSG);
         this.resetFromAndTo();
     }
 
