@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { GiftedChat } from "react-native-gifted-chat";
+import Constants from "../constants";
 
 /**
  * @classdesc This is the main implementation class for BusChat. No other components will be found in this project
@@ -13,31 +14,31 @@ export default class MyChat extends Component {
      */
     state = {
         messages: [],
-        from: '',
-        to: '',
-        mode: 'from'
+        from: Constants.EMPTY,
+        to: Constants.EMPTY,
+        mode: Constants.FROM
     }
 
     /**
      * The chatbot user object for this project
      */
     BusChatUser = {
-        _id: 2,
-        name: 'Bus Chat',
-        avatar: null
+        _id: Constants.CHAT_BOT_ID,
+        name: Constants.CHAT_BOT_NAME,
+        avatar: Constants.NULL
     }
 
     /**
      * The main render method for this component
      */
     render() {
-        console.disableYellowBox = true;
+        console.disableYellowBox = Constants.TRUE;
         return (
             <GiftedChat
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
                 user={{
-                    _id: 1,
+                    _id: Constants.USER_ID,
                 }}
             />
         )
@@ -47,7 +48,7 @@ export default class MyChat extends Component {
      * The callback method after the component has been mounted
      */
     componentDidMount() {
-        this.appendMessages('To get started, type your starting location. (Eg: Vinhomes Central Park Binh Thanh) \n\nYou can type \"reset\" anytime to reset this conversation');
+        this.appendMessages(Constants.INTRO_PROMPT);
     }
 
     /**
@@ -55,9 +56,9 @@ export default class MyChat extends Component {
      * @param {*} userMessages The user message input
      */
     onSend(userMessages = []) {
-        var userText = userMessages[0].text;
+        var userText = userMessages[Constants.ZERO].text;
 
-        if (userText == 'reset') {
+        if (userText == Constants.RESET) {
             this.reset();
             return;
         }
@@ -66,16 +67,16 @@ export default class MyChat extends Component {
             messages: GiftedChat.append(previousState.messages, userMessages),
         }));
 
-        if (this.state.mode == 'from') {
+        if (this.state.mode == Constants.FROM) {
             this.setState({
                 from: userText,
-                mode: 'to'
+                mode: Constants.TO
             });
-            this.appendMessages('Type your destination location. (Eg: Ben Thanh Market District 1)');
-        } else if (this.state.mode == 'to') {
+            this.appendMessages(Constants.PROMPT_ENTER_DESTINATION);
+        } else if (this.state.mode == Constants.TO) {
             this.setState({
                 to: userText,
-                mode: 'from'
+                mode: Constants.FROM
             }, this.processDirection);
         }
     }
@@ -87,18 +88,17 @@ export default class MyChat extends Component {
      */
     processDirection() {
         if (this.state.from && this.state.to) {
-            this.appendMessages("Bus Chat is finding a bus route for you ...");
+            this.appendMessages(Constants.PROCESSING_MSG);
             var self = this,
                 url = 'http://buschat.eastus.cloudapp.azure.com:3000/direction/index?from=' + this.state.from + '&to=' + this.state.to;
 
             fetch(url)
                 .then(response => {
-                    console.log(response);
-                    response.json()
+                    return response.json();
                 })
                 .then(responseJson => {
-                    if (responseJson.error == "No routes found") {
-                        self.handleNoRoutesFound();
+                    if (responseJson.error && responseJson.error == Constants.NO_ROUTES_FOUND) {
+                        this.handleNoRoutesFound.bind(self)();
                         return;
                     }
                     self.sendDirectionMessages(responseJson);
@@ -122,7 +122,7 @@ export default class MyChat extends Component {
      * If backend server responses that no routes have been found, this method displays the error message to user.
      */
     handleNoRoutesFound() {
-        this.appendMessages("No routes found for your locations. Please try to be more specific. Start again by entering your starting location.");
+        this.appendMessages(Constants.NO_ROUTES_FOUND);
         this.resetFromAndTo();
     }
 
@@ -143,11 +143,11 @@ export default class MyChat extends Component {
                         this.appendMessages(subDirection);
                     })
                 } else {
-                    this.appendMessages('--> ' + direction);
+                    this.appendMessages(Constants.ARROW + direction);
                 }
             });
-            this.appendMessages("You have arrived!");
-            this.appendMessages("Type your starting location. (Eg: Ben Thanh Market)");
+            this.appendMessages(Constants.ARRIVED_MSG);
+            this.appendMessages(Constants.PROMPT_ENTER_FROM_LOCATION);
         } catch (err) {
             console.error(err);
             this.sendUserError();
@@ -158,9 +158,9 @@ export default class MyChat extends Component {
      */
     resetFromAndTo() {
         this.setState({
-            from: '',
-            to: '',
-            mode: 'from'
+            from: Constants.EMPTY,
+            to: Constants.EMPTY,
+            mode: Constants.FROM
         })
     }
 4
@@ -171,9 +171,9 @@ export default class MyChat extends Component {
         this.resetFromAndTo();
         this.setState({
             messages: [],
-            from: '',
-            to: '',
-            mode: 'from'
+            from: Constants.EMPTY,
+            to: Constants.EMPTY,
+            mode: Constants.FROM
         }, this.componentDidMount);
     }
 
@@ -181,7 +181,7 @@ export default class MyChat extends Component {
      * This method sends user the error message
      */
     sendUserError() {
-        this.appendMessages("The server is currently not available. Please try again later. If you want to try again now, you can start by entering the starting location");
+        this.appendMessages(Constants.SERVER_ERROR_MSG);
     }
 
     /**
@@ -192,7 +192,7 @@ export default class MyChat extends Component {
         this.setState((previousState) => {
             return {
                 messages: GiftedChat.append(previousState.messages, {
-                    _id: Math.round(Math.random() * 1000000),
+                    _id: Math.round(Math.random() * Constants.ONE_MILLION),
                     text: text,
                     createdAt: new Date(),
                     user: this.BusChatUser,
