@@ -1,5 +1,5 @@
 # BusChatReactNative
-No Map UI, no crash, no complicated stuff. Just like how you ask for a direction
+BusChat shows you how to get from point A to point B by public transit. No Map UI, no crash, no complicated stuff. Just like how you ask for a direction
 
 Download APK here: https://drive.google.com/open?id=1uH2yCszsDQ9ziEsRpHvRLNvLx8owIn0Y
 # Wut ? 
