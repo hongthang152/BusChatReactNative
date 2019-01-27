@@ -6,3 +6,4 @@ Download APK here: https://drive.google.com/open?id=1uH2yCszsDQ9ziEsRpHvRLNvLx8o
 1) Enter where you are traveling from
 2) Enter your destination
 3) Follow the instructions
+![](Demo.gif)
