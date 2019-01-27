@@ -8,3 +8,6 @@ Download APK here: https://drive.google.com/open?id=1uH2yCszsDQ9ziEsRpHvRLNvLx8o
 3) Follow the instructions
 
 <img src="Demo.gif" height="600" />
+# Disclaimer
+
+Since this app is created mostly for personal use, it only works best if you are in Viet Nam.
